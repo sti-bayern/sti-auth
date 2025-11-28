@@ -1,0 +1,40 @@
+{
+    "name": "sti-bayern/sti-auth",
+    "version": "0.0.1",
+    "description": "Anmelde-Paket für BVV-Web-Apps",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Krompaß, Matthias (ADBV A)",
+            "email": "Matthias.Krompass@adbv-a.bayern.de"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Sti\\StiAuth\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Sti\\StiAuth\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Sti\\StiAuth\\StiAuthServiceProvider"
+            ]
+        }
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}
+
