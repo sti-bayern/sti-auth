@@ -23,7 +23,7 @@ class AuthClient
 
     public function validateToken(string $token): ?array
     {
-        $response = $this->http->post('/validate', [
+        $response = $this->http->post('/api/validate', [
             'json' => ['token' => $token],
             'headers' => [
                 'Authorization' => "Bearer {$this->token}"

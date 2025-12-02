@@ -21,9 +21,9 @@ class RemoteGuard implements Guard
         if (!$token) return null;
 
         $client = new AuthClient([
-            'base_url' => config('lara-auth.base_url'),
-            'timeout'  => config('lara-auth.timeout', 3),
-            'token'    => config('lara-auth.token'),
+            'base_url' => config('sti-auth.base_url'),
+            'timeout'  => config('sti-auth.timeout', 3),
+            'token'    => config('sti-auth.token'),
         ]);
 
         $data = $client->validateToken($token);

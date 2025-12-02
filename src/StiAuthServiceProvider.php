@@ -13,10 +13,10 @@ class StiAuthServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/sti-auth.php', 'lara-auth');
+        $this->mergeConfigFrom(__DIR__ . '/../config/sti-auth.php', 'sti-auth');
 
         $this->app->singleton(AuthClient::class, function () {
-            return new AuthClient(config('lara-auth'));
+            return new AuthClient(config('sti-auth'));
         });
     }
 

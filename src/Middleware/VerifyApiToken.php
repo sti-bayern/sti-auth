@@ -13,10 +13,10 @@ class VerifyApiToken
 
     public function handle($request, Closure $next)
     {
-        $token = $request->bearerToken();
+        $token = session('api_token');
 
         if (!$token) {
-            return response()->json(['error' => 'Missing token'], 401);
+            return redirect()->route('login');
         }
 
         $user = $this->auth->validateToken($token);
