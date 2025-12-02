@@ -13,7 +13,7 @@ class VerifyApiToken
 
     public function handle($request, Closure $next)
     {
-        $token = session('api_token');
+        $token = session(config('sti-auth.token'));
 
         if (!$token) {
             return redirect()->route('login');
@@ -22,7 +22,8 @@ class VerifyApiToken
         $user = $this->auth->validateToken($token);
 
         if (!$user) {
-            return response()->json(['error' => 'Invalid token'], 403);
+            session()->forget('api_token');
+            return redirect()->route('login');
         }
 
         // optional: User ins Request-Objekt setzen

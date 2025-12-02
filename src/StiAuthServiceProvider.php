@@ -26,7 +26,7 @@ class StiAuthServiceProvider extends ServiceProvider
             __DIR__ . '/../config/sti-auth.php' => config_path('sti-auth.php'),
         ], 'config');
 
-        $this->loadRoutesFrom(__DIR__ . '/../routes/demo.php');
+        $this->loadRoutesFrom(__DIR__ . '/../routes/sti-auth.php');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sti-auth');
 
         app('router')->aliasMiddleware('auth.api', VerifyApiToken::class);

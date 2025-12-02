@@ -17,8 +17,17 @@ class RemoteGuard implements Guard
     {
         if ($this->user) return $this->user;
 
-        $token = $this->request->session()->get('auth_token');
+        $token = $this->request->session()->get(config('sti-auth.token'));
+
         if (!$token) return null;
+        // dd([
+        //     config('sti-auth'),
+        //     config('sti-auth.base_url'),
+        //     config('sti-auth.token'),
+        //     $this->request->session(config('sti-auth.token')),
+        //     $this->request->session()->get(config('sti-auth.token')),
+        //     $token
+        // ]);
 
         $client = new AuthClient([
             'base_url' => config('sti-auth.base_url'),
