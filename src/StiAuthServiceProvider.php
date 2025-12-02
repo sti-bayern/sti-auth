@@ -25,13 +25,16 @@ class StiAuthServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../config/sti-auth.php' => config_path('sti-auth.php'),
         ], 'config');
+        $this->publishes([
+            __DIR__ . '/../routes/sti-auth.php' => base_path('routes/sti-auth.php'),
+        ], 'route');
 
         $this->loadRoutesFrom(__DIR__ . '/../routes/sti-auth.php');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sti-auth');
 
         app('router')->aliasMiddleware('auth.api', VerifyApiToken::class);
 
-                // UserProvider registrieren
+        // UserProvider registrieren
         Auth::provider('remote', function ($app, array $config) {
             return new RemoteUserProvider();
         });

@@ -1,6 +1,6 @@
 {
     "name": "sti-bayern/sti-auth",
-    "version": "0.0.4",
+    "version": "0.1.0",
     "description": "Anmelde-Paket für BVV-Web-Apps",
     "type": "library",
     "license": "MIT",
