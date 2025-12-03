@@ -145,10 +145,10 @@ Mit dem Paket funktionieren die Standard-Blade-Authentication-Mechanismen `@auth
                              |
                              | 2. POST /api/login (Remote Auth)
                              v
-+--------------------------------------------------------------+
-|                      Zentrale Auth-App                       |
-|                          (LaraAuth)                          |
-|                                                              |
++---------------------------------------------------------------+
+|                      Zentrale Auth-App                        |
+|                          (StiAuth)                            |
+|                                                               |
 |   +---------------------------+      +---------------------+  |
 |   |   AuthController@login    | ---> | Active Directory    |  |
 |   | - validiert Credentials   | 3.   | (via ldaprecord)    |  |
@@ -170,15 +170,17 @@ Mit dem Paket funktionieren die Standard-Blade-Authentication-Mechanismen `@auth
                              |
                              | 6. Abrufen des Tokens aus Session
                              v
-+--------------------------------------------------------------+
-|                      Zentrale Auth-App                       |
-|                           /api/validate                      |
-|                                                              |
-|  +----------------+   7. Prüfen Token  +------------------+  |
-|  | AuthController | ------------------> | Token gültig?   |  |
++---------------------------------------------------------------+
+|                      Zentrale Auth-App                        |
+|                          (StiAuth)                            |
+|                        /api/validate                          |
+|                                                               |
+|  +----------------+   7. Prüfen Token  +------------------+   |
+|  | AuthController | ------------------> | Token gültig?   |   |
 |  +----------------+                     +------------------+  |
-|                      8. User-Daten zurückgeben               |
-+--------------------------------------------------------------+
+|                      8. User-Daten zurückgeben:               |
+|                         Auth::user()                          |
++---------------------------------------------------------------+
                              |
                              v
                    +------------------------+
