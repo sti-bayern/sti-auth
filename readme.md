@@ -131,6 +131,64 @@ Mit dem Paket funktionieren die Standard-Blade-Authentication-Mechanismen `@auth
 7.  `RemoteGuard` erstellt ein `RemoteUser` Objekt
 8.  Laravel erkennt den Benutzer als angemeldet
 
+```
+                   +--------------------+
+                   |   Personen-App     |
+                   |  (Client-System)   |
+                   +---------+----------+
+                             |
+                             | 1. User gibt Username/Passwort ein
+                             v
+                   +--------------------+
+                   |  LoginController   |
+                   +---------+----------+
+                             |
+                             | 2. POST /api/login (Remote Auth)
+                             v
++--------------------------------------------------------------+
+|                      Zentrale Auth-App                       |
+|                          (LaraAuth)                          |
+|                                                              |
+|   +---------------------------+      +---------------------+  |
+|   |   AuthController@login    | ---> | Active Directory    |  |
+|   | - validiert Credentials   | 3.   | (via ldaprecord)    |  |
+|   | - erstellt Token          |      +---------------------+  |
+|   +------------+--------------+                               |
+|                | 4. Token zurückgeben                         |
++--------------------------------------------------------------+
+                             |
+                             v
+                   +--------------------+
+                   |   Personen-App     |
+                   +---------+----------+
+                             |
+                             | 5. Token in Session speichern
+                             v
+                   +--------------------+
+                   |   RemoteGuard      |
+                   +---------+----------+
+                             |
+                             | 6. Abrufen des Tokens aus Session
+                             v
++--------------------------------------------------------------+
+|                      Zentrale Auth-App                       |
+|                           /api/validate                      |
+|                                                              |
+|  +----------------+   7. Prüfen Token  +------------------+  |
+|  | AuthController | ------------------> | Token gültig?   |  |
+|  +----------------+                     +------------------+  |
+|                      8. User-Daten zurückgeben               |
++--------------------------------------------------------------+
+                             |
+                             v
+                   +------------------------+
+                   | RemoteUser (Authent.)  |
+                   +-----------+------------+
+                               |
+                               v
+                     @auth in Blade funktioniert
+```
+
 ## Support
 
 Bei Fragen, Ideen, Bugreports bitte melden.
