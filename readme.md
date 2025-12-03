@@ -151,10 +151,10 @@ Mit dem Paket funktionieren die Standard-Blade-Authentication-Mechanismen `@auth
 |                                                               |
 |   +---------------------------+      +---------------------+  |
 |   |   AuthController@login    | ---> | Active Directory    |  |
-|   | - validiert Credentials   | 3.   | (via ldaprecord)    |  |
+|   | - validiert Credentials   |      | (via ldaprecord)    |  |
 |   | - erstellt Token          |      +---------------------+  |
 |   +------------+--------------+                               |
-|                | 4. Token zurückgeben                         |
+|                | 3. Token zurückgeben                         |
 +--------------------------------------------------------------+
                              |
                              v
@@ -162,33 +162,33 @@ Mit dem Paket funktionieren die Standard-Blade-Authentication-Mechanismen `@auth
                    |   Personen-App     |
                    +---------+----------+
                              |
-                             | 5. Token in Session speichern
+                             | 4. Token in Session speichern
                              v
                    +--------------------+
                    |   RemoteGuard      |
                    +---------+----------+
                              |
-                             | 6. Abrufen des Tokens aus Session
+                             | 5. Abrufen des Tokens aus Session
                              v
 +---------------------------------------------------------------+
 |                      Zentrale Auth-App                        |
 |                          (StiAuth)                            |
 |                        /api/validate                          |
 |                                                               |
-|  +----------------+   7. Prüfen Token  +------------------+   |
+|  +----------------+     Prüfen Token    +-----------------+   |
 |  | AuthController | ------------------> | Token gültig?   |   |
-|  +----------------+                     +------------------+  |
-|                      8. User-Daten zurückgeben:               |
+|  +----------------+                     +-----------------+   |
+|                      6. User-Daten zurückgeben:               |
 |                         Auth::user()                          |
 +---------------------------------------------------------------+
                              |
                              v
-                   +------------------------+
-                   | RemoteUser (Authent.)  |
-                   +-----------+------------+
+                   +---------------------------+
+                   | 7. RemoteUser (Authent.)  |
+                   +--------------+------------+
                                |
                                v
-                     @auth in Blade funktioniert
+                     8. @auth in Blade funktioniert
 ```
 
 ## Support
