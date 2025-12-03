@@ -31,7 +31,7 @@ Bei lokaler Entwicklung:
 
 ### Setzen der Env-Variablen
 
-In der `.env` können folgende Variablen gesetzt werden. Die Beispielwerte entsprechen den Standardwerten
+In der `.env` können optional folgende Variablen gesetzt werden: (die Beispielwerte entsprechen den Standardwerten)
     
     AUTH_BASE_URL=https://adressen.ldbv.bybn.de     # Url des Anmeldedienstes
     AUTH_API_VIEW=sti-auth::login                   # View-Name des Login-Templates
@@ -78,7 +78,7 @@ Standardmäßig läuft das Login über die Route `/login`.
 
 Das kann entweder über die entsprechenden Variablen in der .env-Datei geändert werden, oder man veröffentlich die route-File des Pakets und passt diese an.
 
-    php artisan vendor:publish --provider="Sti\StiAuth\StiAuthServiceProvider" --tag=config
+    php artisan vendor:publish --provider="Sti\StiAuth\StiAuthServiceProvider" --tag=route
 
 ## Middleware registrieren
 
