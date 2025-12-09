@@ -119,6 +119,56 @@ Wenn `local_user.model` auf ein gültiges Eloquent-Modell gesetzt ist, wird die 
 
 Wenn `local_user.model` auf `null` gesetzt ist (Standardeinstellung), ist die Synchronisierung deaktiviert, und das Paket verhält sich wie zuvor.
 
+### 3. Eloquent-Modell erstellen
+
+Das Paket liefert nur die Migration, um die Datenbanktabelle zu erstellen. Für das passende Eloquent-Modell sind Sie selbst verantwortlich. Stellen Sie sicher, dass das Modell die Eigenschaften `$fillable` und ggf. `$table` korrekt gesetzt hat, damit die Synchronisierung funktioniert.
+
+Hier ist ein Beispiel für ein `App\Models\User`-Modell:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
+{
+    use Notifiable;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'users'; // Muss mit dem Wert in config('sti-auth.local_user.table') übereinstimmen
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'id',
+        'name',
+        'email',
+        'login',
+    ];
+}
+```
+
+**Wichtige Hinweise:**
+- Stellen Sie sicher, dass die in `$fillable` aufgeführten Attribute mit den Werten in `config('sti-auth.local_user.sync_attributes')` übereinstimmen.
+- Da die `id` vom zentralen Authentifizierungsserver stammt und kein auto-inkrementierender Wert ist, ist es entscheidend, `public $incrementing = false;` im Modell zu setzen.
+
 ## Middleware registrieren
 
 Um Routen zu schützen muss zuerst die Middleware registriert werden.
