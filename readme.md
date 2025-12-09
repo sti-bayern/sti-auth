@@ -80,6 +80,97 @@ Das kann entweder über die entsprechenden Variablen in der .env-Datei geändert
 
     php artisan vendor:publish --provider="Sti\StiAuth\StiAuthServiceProvider" --tag=route
 
+## Optionale Synchronisierung in eine lokale User-Tabelle
+
+Standardmäßig gibt `Auth::user()` einen `RemoteUser` zurück, der nur die vom Authentifizierungsserver bereitgestellten Daten enthält. Es ist jedoch möglich, diese Daten bei jeder Anmeldung automatisch in eine lokale Datenbanktabelle zu synchronisieren. Dies ermöglicht es Ihnen, Beziehungen zu anderen Modellen in Ihrer Anwendung zu definieren und die Benutzerdaten lokal zu erweitern.
+
+### 1. Migration veröffentlichen und ausführen
+
+Zuerst müssen Sie die Migrationsdatei veröffentlichen, die eine Standard-Benutzertabelle erstellt:
+
+    php artisan vendor:publish --provider="Sti\StiAuth\StiAuthServiceProvider" --tag=migrations
+    php artisan migrate
+
+### 2. Konfiguration anpassen
+
+Öffnen Sie die Konfigurationsdatei `config/sti-auth.php` (veröffentlichen Sie sie, falls noch nicht geschehen) und passen Sie den Abschnitt `local_user` an.
+
+```php
+// config/sti-auth.php
+
+'local_user' => [
+    // Geben Sie hier Ihr lokales Benutzermodell an.
+    'model' => App\Models\User::class,
+
+    // Der Name der Datenbanktabelle (optional, Standard ist 'users').
+    'table' => 'users',
+
+    // Mappen Sie hier die Attribute des Remote-Users auf Ihre lokalen Datenbankspalten.
+    'sync_attributes' => [
+        'id'    => 'id',
+        'name'  => 'name',
+        'email' => 'email',
+        'login' => 'login',
+    ],
+],
+```
+
+Wenn `local_user.model` auf ein gültiges Eloquent-Modell gesetzt ist, wird die Synchronisierung aktiviert. Bei jeder Anmeldung wird der Benutzer in der lokalen Tabelle über die `id` gesucht und aktualisiert (`updateOrCreate`). `Auth::user()` gibt dann eine Instanz Ihres lokalen Modells anstelle des `RemoteUser` zurück.
+
+Wenn `local_user.model` auf `null` gesetzt ist (Standardeinstellung), ist die Synchronisierung deaktiviert, und das Paket verhält sich wie zuvor.
+
+### 3. Eloquent-Modell erstellen
+
+Das Paket liefert nur die Migration, um die Datenbanktabelle zu erstellen. Für das passende Eloquent-Modell sind Sie selbst verantwortlich. **Es ist zwingend erforderlich, dass Ihr Modell die `Illuminate\Contracts\Auth\Authenticatable`-Schnittstelle implementiert.**
+
+Der einfachste Weg, dies zu erreichen, ist die Erweiterung der Basisklasse `Illuminate\Foundation\Auth\User`, wie im folgenden Beispiel gezeigt. Stellen Sie außerdem sicher, dass die Eigenschaften `$fillable` und `$table` korrekt gesetzt sind.
+
+Hier ist ein Beispiel für ein `App\Models\User`-Modell:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
+{
+    use Notifiable;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'users'; // Muss mit dem Wert in config('sti-auth.local_user.table') übereinstimmen
+
+    /**
+     * Indicates if the model's ID is auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'id',
+        'name',
+        'email',
+        'login',
+    ];
+}
+```
+
+**Wichtige Hinweise:**
+- Stellen Sie sicher, dass die in `$fillable` aufgeführten Attribute mit den Werten in `config('sti-auth.local_user.sync_attributes')` übereinstimmen.
+- Da die `id` vom zentralen Authentifizierungsserver stammt und kein auto-inkrementierender Wert ist, ist es entscheidend, `public $incrementing = false;` im Modell zu setzen.
+
 ## Middleware registrieren
 
 Um Routen zu schützen muss zuerst die Middleware registriert werden.
