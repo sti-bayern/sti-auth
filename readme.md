@@ -80,6 +80,45 @@ Das kann entweder über die entsprechenden Variablen in der .env-Datei geändert
 
     php artisan vendor:publish --provider="Sti\StiAuth\StiAuthServiceProvider" --tag=route
 
+## Optionale Synchronisierung in eine lokale User-Tabelle
+
+Standardmäßig gibt `Auth::user()` einen `RemoteUser` zurück, der nur die vom Authentifizierungsserver bereitgestellten Daten enthält. Es ist jedoch möglich, diese Daten bei jeder Anmeldung automatisch in eine lokale Datenbanktabelle zu synchronisieren. Dies ermöglicht es Ihnen, Beziehungen zu anderen Modellen in Ihrer Anwendung zu definieren und die Benutzerdaten lokal zu erweitern.
+
+### 1. Migration veröffentlichen und ausführen
+
+Zuerst müssen Sie die Migrationsdatei veröffentlichen, die eine Standard-Benutzertabelle erstellt:
+
+    php artisan vendor:publish --provider="Sti\StiAuth\StiAuthServiceProvider" --tag=migrations
+    php artisan migrate
+
+### 2. Konfiguration anpassen
+
+Öffnen Sie die Konfigurationsdatei `config/sti-auth.php` (veröffentlichen Sie sie, falls noch nicht geschehen) und passen Sie den Abschnitt `local_user` an.
+
+```php
+// config/sti-auth.php
+
+'local_user' => [
+    // Geben Sie hier Ihr lokales Benutzermodell an.
+    'model' => App\Models\User::class,
+
+    // Der Name der Datenbanktabelle (optional, Standard ist 'users').
+    'table' => 'users',
+
+    // Mappen Sie hier die Attribute des Remote-Users auf Ihre lokalen Datenbankspalten.
+    'sync_attributes' => [
+        'id'    => 'id',
+        'name'  => 'name',
+        'email' => 'email',
+        'login' => 'login',
+    ],
+],
+```
+
+Wenn `local_user.model` auf ein gültiges Eloquent-Modell gesetzt ist, wird die Synchronisierung aktiviert. Bei jeder Anmeldung wird der Benutzer in der lokalen Tabelle über die `id` gesucht und aktualisiert (`updateOrCreate`). `Auth::user()` gibt dann eine Instanz Ihres lokalen Modells anstelle des `RemoteUser` zurück.
+
+Wenn `local_user.model` auf `null` gesetzt ist (Standardeinstellung), ist die Synchronisierung deaktiviert, und das Paket verhält sich wie zuvor.
+
 ## Middleware registrieren
 
 Um Routen zu schützen muss zuerst die Middleware registriert werden.

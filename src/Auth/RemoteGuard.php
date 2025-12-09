@@ -38,7 +38,30 @@ class RemoteGuard implements Guard
         $data = $client->validateToken($token);
         if (!$data) return null;
 
-        $this->user = new RemoteUser($data);
+        // Wenn ein lokales User-Model konfiguriert ist, wird der User synchronisiert
+        if ($modelClass = config('sti-auth.local_user.model')) {
+            $syncAttributes = config('sti-auth.local_user.sync_attributes', []);
+            $localUserData = [];
+            foreach ($syncAttributes as $remoteKey => $localKey) {
+                if (isset($data[$remoteKey])) {
+                    $localUserData[$localKey] = $data[$remoteKey];
+                }
+            }
+
+            // Sicherstellen, dass die ID für updateOrCreate korrekt gesetzt ist
+            $identifierKey = $syncAttributes['id'] ?? 'id';
+
+            if(isset($localUserData[$identifierKey])) {
+                $this->user = $modelClass::updateOrCreate(
+                    [$identifierKey => $localUserData[$identifierKey]],
+                    $localUserData
+                );
+            }
+        } else {
+            // Andernfalls wird der RemoteUser wie bisher verwendet
+            $this->user = new RemoteUser($data);
+        }
+
         return $this->user;
     }
 

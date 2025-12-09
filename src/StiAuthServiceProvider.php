@@ -29,6 +29,10 @@ class StiAuthServiceProvider extends ServiceProvider
             __DIR__ . '/../routes/sti-auth.php' => base_path('routes/sti-auth.php'),
         ], 'route');
 
+        $this->publishes([
+            __DIR__ . '/../database/migrations/2024_05_21_100000_create_sti_auth_users_table.php' => database_path('migrations/2024_05_21_100000_create_sti_auth_users_table.php'),
+        ], 'migrations');
+
         $this->loadRoutesFrom(__DIR__ . '/../routes/sti-auth.php');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'sti-auth');
 

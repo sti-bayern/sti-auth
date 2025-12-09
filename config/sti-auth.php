@@ -7,4 +7,15 @@ return [
     'route_login' => env('AUTH_API_ROUTE_LOGIN', '/login'),
     'route_logout' => env('AUTH_API_ROUTE_LOGOUT', '/logout'),
     'timeout'  => 3,
+
+    'local_user' => [
+        'model' => null,
+        'table' => 'users',
+        'sync_attributes' => [
+            'id' => 'id',
+            'name' => 'name',
+            'email' => 'email',
+            'login' => 'login',
+        ],
+    ],
 ];
