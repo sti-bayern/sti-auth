@@ -121,7 +121,9 @@ Wenn `local_user.model` auf `null` gesetzt ist (Standardeinstellung), ist die Sy
 
 ### 3. Eloquent-Modell erstellen
 
-Das Paket liefert nur die Migration, um die Datenbanktabelle zu erstellen. Für das passende Eloquent-Modell sind Sie selbst verantwortlich. Stellen Sie sicher, dass das Modell die Eigenschaften `$fillable` und ggf. `$table` korrekt gesetzt hat, damit die Synchronisierung funktioniert.
+Das Paket liefert nur die Migration, um die Datenbanktabelle zu erstellen. Für das passende Eloquent-Modell sind Sie selbst verantwortlich. **Es ist zwingend erforderlich, dass Ihr Modell die `Illuminate\Contracts\Auth\Authenticatable`-Schnittstelle implementiert.**
+
+Der einfachste Weg, dies zu erreichen, ist die Erweiterung der Basisklasse `Illuminate\Foundation\Auth\User`, wie im folgenden Beispiel gezeigt. Stellen Sie außerdem sicher, dass die Eigenschaften `$fillable` und `$table` korrekt gesetzt sind.
 
 Hier ist ein Beispiel für ein `App\Models\User`-Modell:
 

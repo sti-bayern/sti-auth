@@ -40,6 +40,12 @@ class RemoteGuard implements Guard
 
         // Wenn ein lokales User-Model konfiguriert ist, wird der User synchronisiert
         if ($modelClass = config('sti-auth.local_user.model')) {
+
+            // Sicherstellen, dass das Model die Authenticatable-Schnittstelle implementiert
+            if (!in_array(\Illuminate\Contracts\Auth\Authenticatable::class, class_implements($modelClass))) {
+                throw new \Exception("The configured local user model [{$modelClass}] must implement the Illuminate\\Contracts\\Auth\\Authenticatable interface.");
+            }
+
             $syncAttributes = config('sti-auth.local_user.sync_attributes', []);
             $localUserData = [];
             foreach ($syncAttributes as $remoteKey => $localKey) {
